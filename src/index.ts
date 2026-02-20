@@ -61,6 +61,12 @@ const THEMES = {
   ],
 };
 
+// Strip @font-face blocks from SVG. Each block contains a base64 WOFF subset
+// (~50–200 KB). The SVG still displays but falls back to system fonts.
+function stripFontFaces(svg: string): string {
+  return svg.replace(/@font-face\s*\{[^{}]*\}/g, "").replace(/\n{3,}/g, "\n\n");
+}
+
 // --- D2 WASM instance (shared, lazily initialized) ---
 
 let d2Instance: D2 | null = null;
@@ -174,6 +180,12 @@ const RenderInputSchema = z
       .describe(
         "Render as ASCII/Unicode art instead of SVG (default: false). Useful for text-only contexts."
       ),
+    skip_fonts: z
+      .boolean()
+      .optional()
+      .describe(
+        "Strip embedded font data from SVG output (default: false). Reduces SVG size by ~500KB by removing base64 WOFF data. Browser display falls back to system fonts. No effect on ascii output."
+      ),
   })
   .strict();
 
@@ -270,11 +282,15 @@ Error Handling:
         RENDER_TIMEOUT_MS,
         "d2_render compile"
       );
-      const svg = await withTimeout(
+      let svg = await withTimeout(
         d2.render(result.diagram, result.renderOptions),
         RENDER_TIMEOUT_MS,
         "d2_render render"
       );
+
+      if (params.skip_fonts) {
+        svg = stripFontFaces(svg);
+      }
 
       if (svg.length > CHARACTER_LIMIT) {
         return {
@@ -284,7 +300,7 @@ Error Handling:
               type: "text" as const,
               text:
                 `Error: Rendered output is too large (${svg.length} chars, limit ${CHARACTER_LIMIT}). ` +
-                `Simplify your diagram or use ascii=true for a smaller output.`,
+                `Simplify your diagram, use ascii=true, or use skip_fonts=true for a smaller SVG output.`,
             },
           ],
         };

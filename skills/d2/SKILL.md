@@ -576,7 +576,19 @@ comments.author_id -> users.id
 
 ## Saving Rendered SVGs
 
-After calling `d2_render`, always save the SVG output to disk using the Write tool.
+Always make **two `d2_render` calls** and save three files:
+
+**Step 1 — Render for saving** (full SVG with embedded fonts, for browser viewing):
+```
+d2_render(d2_code=..., skip_fonts=false)
+```
+Save this output as `diagrams/<stem>.svg`
+
+**Step 2 — Render for display** (fonts stripped, compact for LLM context):
+```
+d2_render(d2_code=..., skip_fonts=true)
+```
+Use this output to show the diagram in the conversation.
 
 **Convention:**
 - Directory: `diagrams/` (relative to the current project root; create if it doesn't exist)
@@ -589,7 +601,7 @@ After calling `d2_render`, always save the SVG output to disk using the Write to
 
 **Save two files with the same stem:**
 1. `diagrams/<stem>.d2` — the D2 source code (use the Write tool)
-2. `diagrams/<stem>.svg` — the rendered SVG output (use the Write tool)
+2. `diagrams/<stem>.svg` — the full SVG from Step 1 (use the Write tool)
 
 **After saving**, tell the user both paths so they can edit the source or open the SVG in a browser.
 
