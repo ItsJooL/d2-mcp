@@ -1,0 +1,35 @@
+{
+  "name": "d2-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for D2 diagram language — render, format, and validate D2 diagrams via WASM (no d2 binary required)",
+  "type": "module",
+  "main": "dist/index.js",
+  "bin": {
+    "d2-mcp-server": "dist/index.js"
+  },
+  "files": [
+    "dist/",
+    "skills/",
+    "src/"
+  ],
+  "scripts": {
+    "start": "node dist/index.js",
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "clean": "rm -rf dist",
+    "prepare": "npm run build"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.6.1",
+    "@terrastruct/d2": "^0.1.33",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
