@@ -5,7 +5,7 @@
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "d2-mcp-server": "dist/index.js"
+    "d2-mcp": "dist/index.js"
   },
   "files": [
     "dist/",

@@ -547,19 +547,22 @@ Layout guidance:
 // --- Main ---
 
 async function main(): Promise<void> {
-  // Warm up both layout engine code paths inside the WASM before accepting
-  // requests. dagre and elk are separate algorithms — each needs its own JIT
-  // pass. Running both trivial compiles here means the first real render won't
-  // pay that cost regardless of which layout the user requests.
-  const d2 = getD2();
-  await Promise.all([
-    d2.compile("_warmup", { options: { layout: "dagre" } }),
-    d2.compile("_warmup", { options: { layout: "elk" } }),
-  ]);
-
+  // Connect to transport first so clients can initialize immediately.
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error("D2 MCP server running via stdio (dagre + elk warmed up)");
+  console.error("D2 MCP server running via stdio");
+
+  // Warm up both layout engine WASM code paths in the background so the first
+  // real render doesn't pay the JIT cost. Runs after connect so startup is instant.
+  const d2 = getD2();
+  Promise.all([
+    d2.compile("_warmup", { options: { layout: "dagre" } }),
+    d2.compile("_warmup", { options: { layout: "elk" } }),
+  ]).then(() => {
+    console.error("D2 WASM warmed up (dagre + elk ready)");
+  }).catch((err: unknown) => {
+    console.error("D2 WASM warmup error:", err);
+  });
 }
 
 main().catch((error: unknown) => {
