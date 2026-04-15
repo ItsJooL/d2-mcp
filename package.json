@@ -17,7 +17,8 @@
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "clean": "rm -rf dist",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "test": "node test-live.mjs"
   },
   "engines": {
     "node": ">=18"

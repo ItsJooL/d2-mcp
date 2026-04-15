@@ -6,7 +6,8 @@ An MCP (Model Context Protocol) server for the [D2 diagram language](https://d2l
 
 | Tool | Description | Requires `d2` binary? |
 |------|-------------|----------------------|
-| `d2_render` | Compile and render D2 source to SVG or ASCII art | No |
+| `d2_render` | Compile and render D2 source to SVG | No |
+| `d2_inspect` | Parse D2 and return a structured text summary of shapes/connections (fast preview, no rendering) | No |
 | `d2_validate` | Check D2 syntax and return errors | No |
 | `d2_format` | Canonically format D2 source code | Yes |
 | `d2_list_themes` | List all available themes with IDs | No |
